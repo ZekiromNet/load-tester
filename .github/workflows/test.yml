@@ -17,7 +17,7 @@ on:
           - 'GET'
           - 'POST'
       requests:
-        description: 'Total number of requests to send'
+        description: 'Requests to send per matrix (x/20)'
         required: true
         default: '10000'
         type: string
