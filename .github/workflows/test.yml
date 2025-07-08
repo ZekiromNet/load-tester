@@ -23,8 +23,13 @@ on:
         type: string
       max_concurrency:
         description: 'Maximum number of concurrent requests'
-        required: false
+        required: true
         default: '1000'
+        type: string
+      timeout:
+        description: 'Time to wait for response'
+        required: true
+        default: '10s'
         type: string
 jobs:
   load-test:
@@ -48,5 +53,6 @@ jobs:
             --method ${{ github.event.inputs.method }} \
             --requests ${{ github.event.inputs.requests }} \
             --max-concurrency ${{ github.event.inputs.max_concurrency }} \
+            --timeout ${{ github.event.inputs.timeout }}
             --status-interval 1s \
             --verbose
