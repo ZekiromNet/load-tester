@@ -43,8 +43,8 @@ func main() {
 			},
 			&cli.DurationFlag{
 				Name:  "status-interval",
-				Usage: "Status reporting interval (e.g. 10s, 1m)",
-				Value: 15 * time.Second,
+				Usage: "Status reporting interval (e.g. 1s, 2s)",
+				Value: 1 * time.Second,
 			},
 			&cli.BoolFlag{
 				Name:  "verbose",
@@ -61,6 +61,7 @@ func main() {
 				StatusInterval: c.Duration("status-interval"),
 				Verbose:        c.Bool("verbose"),
 			}
+			pterm.Println(cfg)
 			verbose := c.Bool("verbose")
 			RunLoadTest(cfg, verbose)
 			return nil
