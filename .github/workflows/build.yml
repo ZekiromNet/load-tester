@@ -1,0 +1,99 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      release:
+        required: true
+        type: boolean
+
+      
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64, 386, arm]
+        os: [windows, linux, darwin]
+        exclude: 
+          - os: darwin
+            arch: 386
+          - os: darwin
+            arch: arm
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        if: ${{inputs.release == true}}
+        with:
+          node-version: '22'
+      
+      - name: Install semantic-release dependencies
+        if: ${{inputs.release == true}}
+        run: |
+          npm i --save-dev conventional-changelog-conventionalcommits
+          npm install --save-dev semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github @semantic-release/exec @semantic-release/gitlab @semantic-release/npm @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog @semantic-release/exec 
+  
+      - name: Run semantic-release (Update Version)
+        if: ${{inputs.release == true}}
+        run: |
+          cp ./.github/.releaserc.js .
+          VERSION_SPACES=$(npx semantic-release --dry-run | grep -oP 'Published release \K.*? ')
+          VERSION="${VERSION_SPACES// /}" 
+          echo $VERSION
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: version_release
+        continue-on-error: true
+      
+      - name: Set version for CI
+        if: ${{inputs.release != true}}
+        run: |
+          VERSION="CI-RUN-${{ github.run_number }}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        id: version_ci
+        
+
+      - name: Install dependencies
+        run: |
+          go mod tidy
+
+
+      
+      - name: Build
+        run: |
+          OUTPUT_NAME="load-tester-${GOOS}-${GOARCH}-${VERSION}"
+          if [[ "$GOOS" == "windows" ]]; then
+            OUTPUT_NAME="${OUTPUT_NAME}.exe"
+          fi
+          go build -o "$OUTPUT_NAME" .
+
+          echo "output_name=$OUTPUT_NAME" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=${OUTPUT_NAME}.bin" >> "$GITHUB_OUTPUT"
+
+        id: build
+        env: 
+          GOOS: ${{matrix.os}}
+          GOARCH: ${{matrix.arch}}
+          VERSION: ${{ steps.version_release.outputs.version || steps.version_ci.outputs.version }}
+
+
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build.outputs.artifact_name }}
+          path: ${{ steps.build.outputs.output_name }}
+          retention-days: 1
