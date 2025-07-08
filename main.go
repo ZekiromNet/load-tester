@@ -44,7 +44,7 @@ func main() {
 			&cli.DurationFlag{
 				Name:  "status-interval",
 				Usage: "Status reporting interval (e.g. 1s, 2s)",
-				Value: 1 * time.Second,
+				Value: 250 * time.Millisecond,
 			},
 			&cli.BoolFlag{
 				Name:  "verbose",
