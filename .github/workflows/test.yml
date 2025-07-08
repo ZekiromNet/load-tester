@@ -54,5 +54,5 @@ jobs:
             --requests ${{ github.event.inputs.requests }} \
             --max-concurrency ${{ github.event.inputs.max_concurrency }} \
             --timeout ${{ github.event.inputs.timeout }} \
-            --status-interval 1s \
+            --status-interval 5s \
             --verbose
