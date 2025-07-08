@@ -53,6 +53,6 @@ jobs:
             --method ${{ github.event.inputs.method }} \
             --requests ${{ github.event.inputs.requests }} \
             --max-concurrency ${{ github.event.inputs.max_concurrency }} \
-            --timeout ${{ github.event.inputs.timeout }}
+            --timeout ${{ github.event.inputs.timeout }} \
             --status-interval 1s \
             --verbose
