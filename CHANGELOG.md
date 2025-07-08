@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/ZekiromNet/load-tester/compare/v1.0.0...v1.0.1) (2025-07-08)
+
+### 🐛 Bug Fixes
+
+* **main.go:** remove unnecessary logging and arguments ([ef068ae](https://github.com/ZekiromNet/load-tester/commit/ef068ae9675d4e6171742078a7763f8b9e817543))
+
 ## 1.0.0 (2025-07-08)
 
 ### 🚀 Features
