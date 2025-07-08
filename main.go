@@ -61,9 +61,7 @@ func main() {
 				StatusInterval: c.Duration("status-interval"),
 				Verbose:        c.Bool("verbose"),
 			}
-			pterm.Println(cfg)
-			verbose := c.Bool("verbose")
-			RunLoadTest(cfg, verbose)
+			RunLoadTest(cfg)
 			return nil
 		},
 	}
@@ -73,7 +71,7 @@ func main() {
 	}
 }
 
-func RunLoadTest(cfg core.Config, verbose bool) {
+func RunLoadTest(cfg core.Config) {
 	start := time.Now()
 
 	pterm.DefaultHeader.WithBackgroundStyle(pterm.NewStyle(pterm.BgGreen)).WithFullWidth().Println(" Load Tester ")
